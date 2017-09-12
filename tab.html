@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .tab-container{
+            background-color: deepskyblue;
+        }
+        .tab-title-item{
+            display: inline-block;
+            margin-right: 1px;
+            height: 50px;
+            line-height: 50px;
+            color: white;
+            background-color: blue;
+            text-align: center;
+        }
+        .tab-content-item{
+            background: deepskyblue;
+            display: none;
+        }
+        .tab-title-active{
+            background-color: red;
+        }
+        .tab-content-active{
+            width: 600px;
+            height: 350px;
+            text-align: center;
+            line-height: 350px;
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+   <div class="tab-container"></div>
+</body>
+<script>
+    window.onload=function(){
+        var content = {
+            title:[1,2,3],
+            content:["one","two","three"]
+        };
+        function Tab(con,config,content){
+            this.config=config;
+            this.content=content;
+            this.container=document.getElementsByClassName( con )[0];
+            this.setAttr( this.config );
+            this.render( this.content );
+            this.change();
+        }
+        Tab.prototype = {
+            constructor:Tab,
+            setAttr:function( cfg ){
+                this.container.style.width=cfg.width;
+                this.container.style.height=cfg.height;
+
+            },
+            render:function( content ){
+                if( content.title.length === content.content.length ){
+                    var tmp_header  = document.createDocumentFragment();
+                    var tmp_content = document.createDocumentFragment();
+                    var header_ele  = document.createElement("header");
+                    for(var i = 0 ; i < content.title.length ; i ++){
+                        var span_ele  = document.createElement("span");
+                        span_ele.innerHTML = content.title[i];
+                        span_ele.className = "tab-title-item";
+                        span_ele.style.width = parseInt(this.config.width)/content.title.length-1+"px";
+                        header_ele.appendChild(span_ele);
+
+                        tmp_header.appendChild(header_ele);
+
+                        var p_ele = document.createElement("p");
+                        p_ele.innerHTML = content.content[i];
+                        p_ele.className = "tab-content-item";
+                        tmp_content.appendChild(p_ele);
+
+                    }
+                    this.container.appendChild(header_ele);
+                    this.container.appendChild(tmp_content);
+                }else{
+                    throw new Error("title和content内容不匹配！");
+                }
+            },
+            change:function(){
+                var title_collection = document.getElementsByClassName("tab-title-item");
+                var content_collection = document.getElementsByClassName("tab-content-item");
+                var title_length = title_collection.length;
+                title_collection[0].className="tab-title-item tab-title-active";
+                content_collection[0].className="tab-content-item tab-content-active";
+                for(var i=0;i<title_length;i++){
+                      title_collection[i].index=i;
+                      title_collection[i].addEventListener("click",this.title_handler)
+                }
+            },
+            title_handler:function () {
+                var content_collection = document.getElementsByClassName("tab-content-item");
+                var title_collection = document.getElementsByClassName("tab-title-item");
+                var title_length = title_collection.length;
+                for(var j = 0 ; j < title_length ; j++){
+                    title_collection[j].className = "tab-title-item";
+                    content_collection[j].className = "tab-content-item";
+
+                }
+                this.className="tab-title-item tab-title-active";
+                content_collection[this.index].className = "tab-content-item tab-content-active";
+            }
+
+
+        };
+
+        new Tab("tab-container",{width:"600px",height:"400px"},content);
+    }
+</script>
+</html>
